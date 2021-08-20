@@ -17,4 +17,8 @@ def create_app():
     
     db.init_app(app)
 
+    #registro las rutas del Bluprint
+    from . import mail
+    app.register_blueprint(mail.bp)
+
     return app
