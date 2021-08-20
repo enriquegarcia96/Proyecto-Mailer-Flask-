@@ -8,7 +8,7 @@ from .schema import instructions
 
 def get_db():
     if 'db' not in g:
-        g.fb = mysql.connector.connect(
+        g.db = mysql.connector.connect(
             host=current_app.config['DATABASE_HOST'],
             user=current_app.config['DATABASE_USER'],
             password=current_app.config['DATABASE_PASSWORD'],
@@ -17,15 +17,17 @@ def get_db():
         g.c = g.db.cursor(dictionary=True)
     return g.db, g.c
 
+
 def close_db(e=None):
-    db =  g.pop('db', None)
+    db = g.pop('db', None)
 
     if db is not None:
         db.close()
 
 
 def init_db():
-    db, c = get_db()#saco las variables de la funcion de arriba
+    # saco las variables de la funcion de arriba
+    db, c = get_db()
 
     for i in instructions:
         c.execute(i)
@@ -41,5 +43,5 @@ def init_db_command():
 
 
 def init_app(app):
-    app.teardow_appcontext(close_db)
+    app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
